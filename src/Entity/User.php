@@ -7,11 +7,12 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[UniqueEntity(fields: ['email'], message: 'Cet email existe déjà.')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -19,12 +20,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\NotBlank(message: 'Veuillez renseigner votre prénom.')]
     #[ORM\Column(length: 255)]
     private ?string $firstname = null;
 
+    #[Assert\NotBlank(message: 'Veuillez renseigner votre nom.')]
     #[ORM\Column(length: 255)]
     private ?string $lastname = null;
 
+    #[Assert\NotBlank(message: 'Veuillez renseigner une adresse mail.')]
+    #[Assert\Email(
+        message: 'L\'email {{ value }} n\'est pas valide.'
+    )]
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
@@ -91,10 +98,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return (string) $this->email;
     }
 
-    public function eraseCredentials(): void
-    {
-    }
-    
+    public function eraseCredentials(): void {}
+
     /**
      * @see PasswordAuthenticatedUserInterface
      */
