@@ -11,9 +11,16 @@
     {{ form_row(registrationForm.firstname) }}
     {{ form_row(registrationForm.lastname) }}
     {{ form_row(registrationForm.email) }}
-    {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
+    <div class="input-group">
+        {{ form_widget(registrationForm.plainPassword, {label: 'password', id: 'password-field'}) }}
+        <button
+            type="button"
+            class="btn btn-outline-secondary"
+            onclick="const i = document.getElementById('password-field'); i.type = i.type === 'password' ? 'text' : 'password';"
+        >
+            👁️
+        </button>
+    </div>
 
     <button type="submit" class="btn">Register</button>
     {{ form_end(registrationForm) }}
