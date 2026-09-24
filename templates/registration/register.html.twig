@@ -1,27 +1,33 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Inscription{% endblock %}
 
 {% block body %}
-    <h1>Register</h1>
-
-    {{ form_errors(registrationForm) }}
-
-    {{ form_start(registrationForm) }}
-    {{ form_row(registrationForm.firstname) }}
-    {{ form_row(registrationForm.lastname) }}
-    {{ form_row(registrationForm.email) }}
-    <div class="input-group">
-        {{ form_widget(registrationForm.plainPassword, {label: 'password', id: 'password-field'}) }}
-        <button
-            type="button"
-            class="btn btn-outline-secondary"
-            onclick="const i = document.getElementById('password-field'); i.type = i.type === 'password' ? 'text' : 'password';"
-        >
-            👁️
-        </button>
+    <div class="container min-vh-100 d-flex flex-column justify-content-center">
+        <h1 class="text-center mb-5">Inscription</h1>
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-6 col-lg-5">
+                {{ form_start(registrationForm, {'attr': {'novalidate': 'novalidate'}}) }}
+                <div class="card p-4 shadow-sm">
+                    {{ form_row(registrationForm.firstname) }}
+                    {{ form_row(registrationForm.lastname) }}
+                    {{ form_row(registrationForm.email) }}
+                    {{ form_label(registrationForm.plainPassword, 'Mot de passe') }}
+                    <div class="input-group mb-5">
+                        {{ form_widget(registrationForm.plainPassword, {'type': 'password'}) }}
+                        <button
+                            type="button"
+                            class="btn btn-warning"
+                            onclick="const i = this.previousElementSibling; i.type = i.type === 'password' ? 'text' : 'password';"
+                        >
+                            👀
+                        </button>
+                        {{ form_errors(registrationForm.plainPassword) }}
+                    </div>
+                    <button type="submit" class="btn btn-warning">Inscription</button>
+                </div>
+                {{ form_end(registrationForm) }}
+            </div>
+        </div>
     </div>
-
-    <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
 {% endblock %}
