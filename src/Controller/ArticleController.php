@@ -10,7 +10,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\User;
-use Symfony\Component\Clock\DatePoint;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use App\Service\FileUploader;
 
 final class ArticleController extends AbstractController
 {
@@ -23,7 +24,7 @@ final class ArticleController extends AbstractController
     }
 
     #[Route('/ajouter-article', name: 'add_article')]
-    public function addArticle(Request $request, EntityManagerInterface $entityManager): Response
+    public function addArticle(Request $request, EntityManagerInterface $entityManager, FileUploader $fileUploader): Response
     {
         $user = $this->getUser();
         if (!$user instanceof User) {
@@ -35,6 +36,12 @@ final class ArticleController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile $image */
+            $image = $form->get('image')->getData();
+            if ($image) {
+                $image = $fileUploader->upload($image);
+                $article->setImage($image);
+            }
             $article->setUser($user);
 
             $entityManager->persist($article);
@@ -46,6 +53,7 @@ final class ArticleController extends AbstractController
 
         return $this->render('article/addArticle.html.twig', [
             'articleForm' => $form,
+            'isEdit' => true
         ]);
     }
 
@@ -53,7 +61,7 @@ final class ArticleController extends AbstractController
      * Action dédiée à la modification d'un article existant.
      */
     #[Route('/modifier-article/{id}', name: 'edit_article')]
-    public function editArticle(Article $article, Request $request, EntityManagerInterface $entityManager): Response
+    public function editArticle(Article $article, Request $request, EntityManagerInterface $entityManager, FileUploader $fileUploader): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -66,6 +74,20 @@ final class ArticleController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $image = $form->get('image')->getData();
+
+            if ($image) {
+                $oldImage = $article->getImage();
+
+                $newFilename = $fileUploader->upload($image);
+
+                $article->setImage($newFilename);
+
+                if ($oldImage) {
+                    $fileUploader->remove($oldImage);
+                }
+            }
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_user');

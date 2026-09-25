@@ -3,11 +3,11 @@
 namespace App\Form;
 
 use App\Entity\Article;
-use App\Entity\User;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Image as ConstraintsImage;
 
 class ArticleFormType extends AbstractType
 {
@@ -16,8 +16,22 @@ class ArticleFormType extends AbstractType
         $builder
             ->add('title')
             ->add('content')
-            //->add('image')
-        ;
+            ->add('image', FileType::class, [
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new ConstraintsImage(
+                        maxSize: '10M',
+                        mimeTypes: [
+                            'image/jpeg',
+                            'image/png',
+                            'image/webp',
+                            'image/gif',
+                        ],
+                        extensionsMessage: 'Merci de charger une image valide.',
+                    )
+                ],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
