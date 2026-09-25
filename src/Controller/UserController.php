@@ -2,10 +2,10 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Entity\User;
 
 final class UserController extends AbstractController
 {
@@ -14,8 +14,15 @@ final class UserController extends AbstractController
     {
         $user = $this->getUser();
 
+        if (!$user instanceof User) {
+            return $this->redirectToRoute('app_login');
+        }
+        
+        $articles = $user->getArticles();
+
         return $this->render('user/index.html.twig', [
-            'user' => $user
+            'user' => $user,
+            'articles' => $articles
         ]);
     }
 }
