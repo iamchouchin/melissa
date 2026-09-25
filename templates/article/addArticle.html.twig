@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% if isEdit %}
+        Modifier un article
+    {% else %}
+        Ajouter un article
+    {% endif %}{% endblock %}
+
+{% block body %}
+    <div class="container min-vh-100 d-flex flex-column justify-content-center">
+        {% if isEdit %}
+            <h1 class="text-center mb-5">Modifier un article</h1>
+        {% else %}
+            <h1 class="text-center mb-5">Ajouter un article</h1>
+        {% endif %}
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-6 col-lg-5">
+                <a href="{{ path('app_user') }}" class="btn btn-warning mb-3">
+                    Annuler {% if isEdit %}la modification {% else %} la création
+                    {% endif %} de l'article.
+                </a>
+                {{ form_start(articleForm) }}
+                <div class="card p-4 shadow-sm">
+                    {{ form_row(articleForm.title) }}
+                    {{ form_row(articleForm.content) }}
+                    <button type="submit" class="btn btn-warning">
+                        {% if isEdit %}
+                            Enregistrer les modifications
+                        {% else %}
+                            Publier un article
+                        {% endif %}
+                    </button>
+                </div>
+                {{ form_end(articleForm) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
