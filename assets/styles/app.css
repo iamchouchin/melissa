@@ -3,7 +3,7 @@
     border-bottom-right-radius: 5px;
 }
 
-input.form-control:focus {
+input.form-control:focus, textarea.form-control:focus {
     box-shadow: none!important;
     border-color: #ffc107!important;
 }
